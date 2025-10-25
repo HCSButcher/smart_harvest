@@ -1,20 +1,23 @@
+// app/role-selection/page.tsx
 "use client";
 
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function RoleSelectionPage() {
-  const { user, isLoaded } = useUser();
+export default function RoleSelection() {
+  const { user } = useUser();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const selectRole = async (role: "farmer" | "foodbank" | "admin") => {
-    if (!user) return alert("Please sign in first.");
+    if (!user) return alert("Sign in first");
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE || "/api"}/set-role`,
+        `${
+          process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000/api"
+        }/clerk/set-role`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -26,7 +29,7 @@ export default function RoleSelectionPage() {
         await user.reload();
         router.push(`/dashboard/${role}`);
       } else {
-        alert(json.error ?? "Failed to set role");
+        alert(json.error || "Failed to set role");
       }
     } catch (err) {
       console.error(err);
@@ -36,35 +39,34 @@ export default function RoleSelectionPage() {
     }
   };
 
-  if (!isLoaded) return <div className="p-8"> Loading...</div>;
-
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="bg-white p-8 rounded shadow max-w-lg w-full text-center">
-        <h2 className="text-2xl font-bold mb-4"> Choose your role</h2>
-        <p className="mb-6 text-gray-600">
-          {" "}
-          Select Farmer if you will list surplus. Select Food Bank if you will
-          request produce
-        </p>
-
-        <div className="flex justify-center gap-4">
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="bg-white p-8 rounded shadow text-center">
+        <h2 className="text-2xl mb-4">Choose your role</h2>
+        <div className="flex gap-3 justify-center">
           <button
             disabled={loading}
             onClick={() => selectRole("farmer")}
             className="px-4 py-2 bg-green-600 text-white rounded"
           >
-            {loading ? "Saving..." : "Farmer"}
+            Farmer
           </button>
           <button
             disabled={loading}
             onClick={() => selectRole("foodbank")}
             className="px-4 py-2 bg-blue-600 text-white rounded"
           >
-            {loading ? "Saving..." : "Food Bank"}
+            Food Bank
+          </button>
+          <button
+            disabled={loading}
+            onClick={() => selectRole("admin")}
+            className="px-4 py-2 bg-gray-700 text-white rounded"
+          >
+            Admin
           </button>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

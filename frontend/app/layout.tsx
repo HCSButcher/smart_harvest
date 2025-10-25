@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 export const metadata = {
   title: "Smart Harvest",
-  description: "SmartHarvest - AI-powered surplus distribution",
+  description: "AI-powered smart agriculture platform",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head />
-      <body>
+      <body className="bg-gray-100 text-gray-900">
         <ClerkProvider publishableKey={clerkPub}>{children}</ClerkProvider>
       </body>
     </html>
