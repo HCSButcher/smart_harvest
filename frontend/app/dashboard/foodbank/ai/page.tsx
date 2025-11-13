@@ -14,7 +14,7 @@ export default function FoodbankAI() {
     setInsight("");
     try {
       // Here we send a "produceList" but include the demand text as an object
-      const res = await api.post("/ai/insight", {
+      const res = await api.post("/ai/insights", {
         produceList: [{ demand: input }],
       });
       setInsight(res.data?.insight || "No insight");
@@ -29,19 +29,22 @@ export default function FoodbankAI() {
   return (
     <div>
       <h2 className="text-xl font-semibold mb-3">AI Matching</h2>
-      <textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Describe your demand (e.g. need 200kg maize in Nakuru city by Friday)"
-        className="w-full p-2 border rounded"
-      />
-      <button
-        onClick={askAI}
-        disabled={loading}
-        className="mt-3 px-4 py-2 bg-blue-600 text-white rounded"
-      >
-        {loading ? "Thinking…" : "Get Matches"}
-      </button>
+      <form onSubmit={askAI}>
+        <input
+          type="textArea"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Describe your demand (e.g. need 200kg maize in Nakuru city by Friday)"
+          className="w-full p-2 border rounded"
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="mt-3 px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          {loading ? "Thinking…" : "Get Matches"}
+        </button>
+      </form>
 
       {insight && (
         <div className="mt-4 p-3 bg-gray-50 rounded border whitespace-pre-wrap">

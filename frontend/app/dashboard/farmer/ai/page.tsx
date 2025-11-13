@@ -15,7 +15,7 @@ export default function FarmerAI() {
     if (!user?.id) return alert("Sign in first");
     setLoading(true);
     try {
-      const res = await api.post("/ai/insight", {
+      const res = await api.post("/ai/insights", {
         produceList: [{ farmerId: user.id, question: input }],
       });
       setAnswer(res.data?.insight || "No response");

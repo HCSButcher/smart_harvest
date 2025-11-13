@@ -30,7 +30,7 @@ export default function FarmerUpload() {
       await api.post("/produce", payload);
 
       // Ask AI for tailored insight (we send list with one item)
-      const aiRes = await api.post("/ai/insight", { produceList: [payload] });
+      const aiRes = await api.post("/ai/insights", { produceList: [payload] });
       setAi(aiRes.data?.insight || "No insight returned");
       setName("");
       setQuantity("");

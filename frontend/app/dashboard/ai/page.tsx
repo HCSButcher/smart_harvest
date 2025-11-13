@@ -14,7 +14,7 @@ export default function AIInsights() {
   const askAI = async () => {
     if (!query) return;
     setLoading(true);
-    const res = await fetch("/api/ai/insight", {
+    const res = await fetch("/api/ai/insights", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query }),

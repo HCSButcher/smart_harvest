@@ -2,15 +2,21 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
+import api from "@/lib/api";
 
 export default function SubscribePage() {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
 
   const handleSubscribe = async () => {
+    if (!user?.primaryEmailAddress?.emailAddress) {
+      alert("Please sign in to subscribe");
+      return;
+    }
+
     setLoading(true);
     try {
-      const res = await fetch("/api/payments/create-checkout", {
+      const res = await api.post("/payments/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -20,7 +26,7 @@ export default function SubscribePage() {
         }),
       });
 
-      const data = await res.json();
+      const data = res.data;
       if (data.success) {
         window.location.href = data.checkout_url;
       } else {

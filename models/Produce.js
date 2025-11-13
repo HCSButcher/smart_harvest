@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const produceSchema = mongoose.Schema(
   {
-    type: {
+    name: {
       type: String,
       required: true,
     },

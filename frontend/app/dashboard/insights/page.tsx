@@ -42,7 +42,7 @@ export default function AIInsightsPage() {
     setResponse("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/ai/insight", {
+      const res = await fetch("http://localhost:5000/api/ai/insights", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
