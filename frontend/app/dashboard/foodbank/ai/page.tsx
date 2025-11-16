@@ -1,6 +1,5 @@
-// app/dashboard/foodbank/ai/page.tsx
 "use client";
-
+import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import api from "@/lib/api";
 
@@ -9,18 +8,37 @@ export default function FoodbankAI() {
   const [insight, setInsight] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const askAI = async () => {
+  const { user } = useUser();
+
+  const askAI = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setLoading(true);
     setInsight("");
+
     try {
-      // Here we send a "produceList" but include the demand text as an object
+      if (!user) {
+        setInsight("User not authenticated");
+        return;
+      }
+
       const res = await api.post("/ai/insights", {
-        produceList: [{ demand: input }],
+        question: input,
+        userId: user.id,
       });
-      setInsight(res.data?.insight || "No insight");
-    } catch (err) {
-      console.error(err);
-      setInsight("Failed to fetch insight");
+
+      setInsight(res.data?.insight?.answer || "No insight returned");
+    } catch (err: any) {
+      console.error("AI request error:", err);
+
+      if (err.response?.status === 429) {
+        setInsight(
+          "AI quota reached. Please contact support staff to continue using this service."
+        );
+      } else {
+        setInsight(
+          "AI service unavailable. Please contact support staff if the issue persists."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -31,7 +49,7 @@ export default function FoodbankAI() {
       <h2 className="text-xl font-semibold mb-3">AI Matching</h2>
       <form onSubmit={askAI}>
         <input
-          type="textArea"
+          type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Describe your demand (e.g. need 200kg maize in Nakuru city by Friday)"

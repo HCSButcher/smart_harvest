@@ -33,7 +33,7 @@ const AiInsights = asyncHandler(async (req, res) => {
         {
           role: "system",
           content:
-            "You are Smart Harvest AI, an assistant that helps farmers and foodbanks with agricultural and food distribution insights.",
+            "You are Smart Harvest AI, an assistant helping farmers and foodbanks.",
         },
         { role: "user", content: question },
       ],
@@ -41,7 +41,6 @@ const AiInsights = asyncHandler(async (req, res) => {
 
     const answer = aiResponse.choices[0].message.content;
 
-    // Save to MongoDB
     const newInsight = await Insight.create({
       userId,
       question,

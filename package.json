@@ -12,7 +12,7 @@
   "description": "",
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.13.23",
-    "axios": "^1.12.2",
+    "axios": "^1.13.2",
     "concurrently": "^9.2.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -20,7 +20,7 @@
     "express-async-handler": "^1.2.0",
     "mongoose": "^8.19.1",
     "nodemon": "^3.1.10",
-    "openai": "^6.6.0",
+    "openai": "^6.9.0",
     "pino": "^10.1.0",
     "pino-pretty": "^13.1.2",
     "svix": "^1.77.0"

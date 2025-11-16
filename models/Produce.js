@@ -1,27 +1,23 @@
+// models/Produce.js
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-const produceSchema = mongoose.Schema(
+const produceSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-    },
-    location: {
-      type: String,
-      required: true,
-    },
-    farmerId: {
-      type: String,
-      required: true,
-    },
+    name: { type: String, required: true },
+    type: { type: String }, // e.g. Maize, Tomatoes
+    quantity: { type: Number, required: true },
+    contact: { type: Number, required: true },
+    unit: { type: String, default: "kg" },
+    price: { type: Number, default: 0 },
+    farmerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    farmerName: { type: String },
+    farmerEmail: { type: String },
+    sold: { type: Boolean, default: false },
+    metadata: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );
 
-const Produce = mongoose.model("Produce", produceSchema);
-
-module.exports = Produce;
+module.exports =
+  mongoose.models.Produce || mongoose.model("Produce", produceSchema);

@@ -9,32 +9,44 @@ export default function SubscribePage() {
   const [loading, setLoading] = useState(false);
 
   const handleSubscribe = async () => {
-    if (!user?.primaryEmailAddress?.emailAddress) {
-      alert("Please sign in to subscribe");
+    const email = user?.emailAddresses?.[0]?.emailAddress;
+    if (!email) {
+      alert("Please sign in to subscribe.");
       return;
     }
 
     setLoading(true);
     try {
       const res = await api.post("/payments/create-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: user.primaryEmailAddress.emailAddress,
-          amount: 1000, // e.g., KES 1000
-          description: "Smart Harvest Premium Subscription",
-        }),
+        email,
+        amount: 1000, // KES 1000 subscription
+        description: "Smart Harvest Premium Subscription",
       });
 
       const data = res.data;
-      if (data.success) {
+
+      if (data.success && data.checkout_url) {
+        // Redirect user to IntaSend checkout
         window.location.href = data.checkout_url;
+      } else if (data.message) {
+        // Show backend-provided error
+        alert(data.message);
       } else {
-        alert("Failed to create payment session");
+        alert(
+          "Failed to create payment session. Please contact support staff."
+        );
       }
-    } catch (err) {
-      console.error(err);
-      alert("Error initiating payment");
+    } catch (err: any) {
+      console.error(
+        "IntaSend frontend error:",
+        err.response?.data || err.message
+      );
+
+      // Show user-friendly message
+      alert(
+        err.response?.data?.message ||
+          "Subscription service is currently unavailable. Please contact support staff."
+      );
     } finally {
       setLoading(false);
     }

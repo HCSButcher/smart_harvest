@@ -1,4 +1,3 @@
-// app/role-selection/page.tsx
 "use client";
 
 import { useUser } from "@clerk/nextjs";
@@ -12,6 +11,9 @@ export default function RoleSelection() {
 
   const selectRole = async (role: "farmer" | "foodbank" | "admin") => {
     if (!user) return alert("Sign in first");
+
+    console.log("Sending user ID to backend:", user.id);
+
     setLoading(true);
     try {
       const res = await fetch(
@@ -24,12 +26,15 @@ export default function RoleSelection() {
           body: JSON.stringify({ userId: user.id, role }),
         }
       );
+
       const json = await res.json();
+      console.log("Backend response:", json);
+
       if (res.ok && json.success) {
-        await user.reload();
+        await user.reload(); // reload user metadata
         router.push(`/dashboard/${role}`);
       } else {
-        alert(json.error || "Failed to set role");
+        alert(json.message || "Failed to set role");
       }
     } catch (err) {
       console.error(err);

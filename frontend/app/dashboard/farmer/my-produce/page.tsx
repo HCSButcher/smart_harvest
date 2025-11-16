@@ -11,6 +11,7 @@ type Produce = {
   name: string;
   quantity: number;
   location: string;
+  contact: number;
   createdAt?: string;
 };
 
@@ -54,7 +55,7 @@ export default function MyProduce() {
         <li key={it._id} className="bg-white p-4 rounded shadow">
           <div className="font-semibold">{it.name}</div>
           <div className="text-sm text-gray-600">
-            {it.quantity} kg — {it.location}
+            {it.quantity} kg — {it.location} — {it.contact}
           </div>
           {it.createdAt && (
             <div className="text-xs text-gray-500 mt-1">

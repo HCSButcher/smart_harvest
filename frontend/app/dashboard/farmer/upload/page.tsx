@@ -9,8 +9,8 @@ export default function FarmerUpload() {
   const { user } = useUser();
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState<number | "">("");
+  const [contact, setContact] = useState<number | "">("");
   const [location, setLocation] = useState("");
-  const [ai, setAi] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
@@ -21,6 +21,7 @@ export default function FarmerUpload() {
       farmerId: user.id,
       name,
       quantity: Number(quantity),
+      contact: Number(contact),
       location,
     };
 
@@ -28,16 +29,14 @@ export default function FarmerUpload() {
       setLoading(true);
       // Save produce
       await api.post("/produce", payload);
-
-      // Ask AI for tailored insight (we send list with one item)
-      const aiRes = await api.post("/ai/insights", { produceList: [payload] });
-      setAi(aiRes.data?.insight || "No insight returned");
       setName("");
       setQuantity("");
+      setContact("");
       setLocation("");
+      alert("Produce saved successfully");
     } catch (err) {
       console.error(err);
-      alert("Failed to save produce / call AI");
+      alert("Failed to save produce ");
     } finally {
       setLoading(false);
     }
@@ -68,6 +67,14 @@ export default function FarmerUpload() {
         />
         <input
           className="w-full p-2 border rounded"
+          placeholder="Contact (e.g +254748092687"
+          type="number"
+          value={contact}
+          onChange={(e) => setContact(Number(e.target.value))}
+          required
+        />
+        <input
+          className="w-full p-2 border rounded"
           placeholder="Location (e.g. Nakuru)"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
@@ -78,16 +85,9 @@ export default function FarmerUpload() {
           disabled={loading}
           className="w-full py-2 bg-green-600 text-white rounded"
         >
-          {loading ? "Saving…" : "Upload & Ask AI"}
+          {loading ? "Saving…" : "Upload Produce"}
         </button>
       </form>
-
-      {ai && (
-        <div className="mt-4 p-3 bg-gray-50 rounded border">
-          <h3 className="font-semibold">AI Insight</h3>
-          <div className="whitespace-pre-wrap">{ai}</div>
-        </div>
-      )}
     </div>
   );
 }

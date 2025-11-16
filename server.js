@@ -11,6 +11,7 @@ const clerkRoutes = require("./routes/clerk.js");
 const webhookRoutes = require("./routes/weebhook.js");
 const connectDB = require("./config/db");
 const { errorHandler } = require("./middleware/errorMiddleware.js");
+const adminRoutes = require("./routes/adminRoutes.js");
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use("/api/produce", produceRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/clerk", clerkRoutes);
 app.use("/api/webhook", webhookRoutes);
+app.use("/api/admin", adminRoutes);
 
 //default route
 app.get("/", (req, res) => {
