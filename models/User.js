@@ -4,18 +4,18 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema(
   {
-    clerkId: { type: String }, // optional: Clerk user id
-    firstName: { type: String },
-    lastName: { type: String },
-    email: { type: String, required: true, unique: true },
+    _id: { type: String, required: true }, // Clerk userId
+    firstName: String,
+    lastName: String,
+    email: { type: String, required: true },
     role: {
       type: String,
-      enum: ["farmer", "foodbank", "admin", "user"],
-      default: "user",
+      enum: ["admin", "farmer", "foodbank"],
+      default: "farmer",
     },
-    publicMetadata: { type: Schema.Types.Mixed, default: {} }, // stores subscribed, etc
+    publicMetadata: Schema.Types.Mixed,
   },
-  { timestamps: true }
+  { timestamps: true, _id: false }
 );
 
 module.exports = mongoose.models.User || mongoose.model("User", userSchema);

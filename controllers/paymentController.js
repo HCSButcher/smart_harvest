@@ -1,6 +1,7 @@
 const axios = require("axios");
 const asyncHandler = require("express-async-handler");
 const { clerkClient } = require("@clerk/clerk-sdk-node");
+const User = require("../models/User.js");
 require("dotenv").config();
 
 // Determine base URL based on environment
@@ -10,7 +11,7 @@ const INTASEND_BASE =
     : "https://payment.intasend.com/api/v1";
 
 /**
- * Create a checkout session (for live or sandbox)
+ * CREATE CHECKOUT SESSION
  */
 const createCheckout = asyncHandler(async (req, res) => {
   try {
@@ -23,7 +24,6 @@ const createCheckout = asyncHandler(async (req, res) => {
       });
     }
 
-    // Body uses public key
     const { data } = await axios.post(
       `${INTASEND_BASE}/checkout/`,
       {
@@ -57,7 +57,7 @@ const createCheckout = asyncHandler(async (req, res) => {
 });
 
 /**
- * Verify payment status and update Clerk user metadata
+ * VERIFY PAYMENT STATUS AND SYNC TO CLERK + MONGODB
  */
 const verifyStatus = asyncHandler(async (req, res) => {
   try {
@@ -78,15 +78,29 @@ const verifyStatus = asyncHandler(async (req, res) => {
     );
 
     if (hasPaid) {
+      // Get Clerk user
       const users = await clerkClient.users.getUserList({
         emailAddress: [email],
       });
-      const user = users?.[0];
+      const clerkUser = users?.[0];
 
-      if (user) {
-        await clerkClient.users.updateUser(user.id, {
-          publicMetadata: { subscribed: true },
+      if (clerkUser) {
+        // Update Clerk subscription metadata
+        await clerkClient.users.updateUser(clerkUser.id, {
+          publicMetadata: { ...clerkUser.publicMetadata, subscribed: true },
         });
+
+        // Sync user to MongoDB (upsert)
+        const mongoUser = {
+          _id: clerkUser.id,
+          firstName: clerkUser.firstName,
+          lastName: clerkUser.lastName,
+          email: clerkUser.emailAddresses?.[0]?.emailAddress,
+          role: clerkUser.publicMetadata?.role || "farmer",
+          publicMetadata: { ...clerkUser.publicMetadata, subscribed: true },
+        };
+
+        await User.findByIdAndUpdate(clerkUser.id, mongoUser, { upsert: true });
       }
     }
 

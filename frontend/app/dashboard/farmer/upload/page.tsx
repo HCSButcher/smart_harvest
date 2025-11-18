@@ -9,6 +9,7 @@ export default function FarmerUpload() {
   const { user } = useUser();
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState<number | "">("");
+  const [price, setPrice] = useState<number | "">("");
   const [contact, setContact] = useState<number | "">("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,6 +20,7 @@ export default function FarmerUpload() {
 
     const payload = {
       farmerId: user.id,
+      price,
       name,
       quantity: Number(quantity),
       contact: Number(contact),
@@ -32,6 +34,7 @@ export default function FarmerUpload() {
       setName("");
       setQuantity("");
       setContact("");
+      setPrice("");
       setLocation("");
       alert("Produce saved successfully");
     } catch (err) {
@@ -71,6 +74,13 @@ export default function FarmerUpload() {
           type="number"
           value={contact}
           onChange={(e) => setContact(Number(e.target.value))}
+          required
+        />
+        <input
+          className="w-full p-2 border rounded"
+          placeholder="Price in (Ksh)"
+          value={price}
+          onChange={(e) => setPrice(Number(e.target.value))}
           required
         />
         <input

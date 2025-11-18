@@ -12,15 +12,35 @@ export default function AIInsights() {
   const subscribed = user?.publicMetadata?.subscribed;
 
   const askAI = async () => {
-    if (!query) return;
+    if (!query || !user) return;
+
     setLoading(true);
-    const res = await fetch("/api/ai/insights", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query }),
-    });
-    const data = await res.json();
-    setResponse(data.insight);
+
+    try {
+      const res = await fetch(
+        process.env.NEXT_PUBLIC_BACKEND_URL + "/ai/insights",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            question: query,
+            userId: user.id,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data?.insight?.answer) {
+        setResponse(data.insight.answer);
+      } else {
+        setResponse("❌ AI failed to generate an answer.");
+      }
+    } catch (err) {
+      console.log(err);
+      setResponse("❌ Failed to reach AI service.");
+    }
+
     setLoading(false);
   };
 
@@ -49,6 +69,7 @@ export default function AIInsights() {
         placeholder="Ask SmartHarvest AI..."
         className="w-full border rounded p-3 mb-4"
       />
+
       <button
         onClick={askAI}
         disabled={loading}

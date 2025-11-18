@@ -24,9 +24,7 @@ export default function AIInsightsPage() {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/ai/history/${user?.id}`
-      );
+      const res = await fetch(`/api/ai/history/${user?.id}`);
       const data = await res.json();
       setHistory(data);
     } catch (error) {
@@ -42,7 +40,7 @@ export default function AIInsightsPage() {
     setResponse("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/ai/insights", {
+      const res = await fetch(`/api/ai/insights`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -52,6 +50,7 @@ export default function AIInsightsPage() {
       });
 
       const data = await res.json();
+
       if (data.success) {
         setResponse(data.insight.answer);
         setHistory((prev) => [data.insight, ...prev]); // prepend new insight
